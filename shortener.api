@@ -1,11 +1,11 @@
 syntax = "v1"
 
 info (
-	title:   "type title here"
-	desc:    "type desc here"
-	author:  "type author here"
-	email:   "type email here"
-	version: "type version here"
+	title:   "ShortRoute API"
+	desc:    "A short URL service built with go-zero."
+	author:  "wenroudeyanhuo"
+	email:   "wenroudeyanhuo@gmail.com"
+	version: "v1"
 )
 
 /* 短链接项目
@@ -33,6 +33,5 @@ service Shortener-api {
 	post /convert (ConvertRequest) returns (ConvertResponse)
 
 	@handler ShowHandler
-	post /:shortUrl (ShowRequest) returns (ShowResponse)
+	get /:shortUrl (ShowRequest) returns (ShowResponse)
 }
-

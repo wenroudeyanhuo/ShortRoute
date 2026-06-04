@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+const defaultBaseStr = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
+
 // 62进制转换
 // 0-9 -> 0-9,a-z -> 10-35    A-Z 36->61
 // 实现 62进制转换
@@ -33,8 +35,8 @@ import (
 
 // 这两个字段将从外面获取
 var (
-	baseStr    string
-	baseStrlen uint64
+	baseStr    = defaultBaseStr
+	baseStrlen = uint64(len(defaultBaseStr))
 )
 
 // MustInit 要使用base62 这个包就必须进行初始化

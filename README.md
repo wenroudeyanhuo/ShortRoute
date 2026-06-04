@@ -1,37 +1,140 @@
-# 短连接项目
+# ShortRoute
 
-## 搭建项目的骨架
-1.建库建表
-新建发号器
-对应 sequence.sql
+ShortRoute is a short URL service built with `go-zero`. It provides two core capabilities:
 
-新建长链接短连接映射表
-对应short_url.sql
+- convert a long URL into a short URL
+- redirect a short URL back to the original target
 
-2.搭建go-zero框架的骨架
-编写api文件  使用goctl 命令生成api文件
-写好文件后，根据api文件生成代码
-goctl api go -api .\shortener.api -dir .
+The project focuses on a practical backend design with MySQL-based sequence generation, Redis-backed Bloom filter checks, and go-zero model/cache integration.
 
+## Architecture
 
-3.根据数据表生成model 层代码
-goctl model mysql datasource -url="root:jinyubo@tcp(127.0.0.1:3306)/test" -table="short_url_map" -dir="./model"
-goctl model mysql datasource -url="root:jinyubo@tcp(127.0.0.1:3306)/test" -table="sequence" -dir="./model"     
+<p align="center">
+  <img src="./image/framework.png" alt="ShortRoute framework" width="720" />
+</p>
 
+The request flow is intentionally simple:
 
-4 go mod tidy
+1. a long URL is submitted to the convert endpoint
+2. the service validates the input and generates a short code
+3. the mapping is stored in MySQL and indexed for lookup
+4. the generated short URL is returned to the caller
+5. later, visiting the short URL triggers a lookup and `302` redirect
 
-5 运行
-看是否可以运行
+## Tech Stack
 
-6 修改配置文件
+- Go
+- go-zero
+- MySQL
+- Redis
+- Bloom Filter
 
-## 查看短链接
-### 缓存版
-有两种方式
-1。使用自己实现的缓存     surl->lurl 节省缓存数据量
-2. 使用go-zero自带的缓存  surl->数据行  不需要自己实现，开发量小
-这里使用第二种
-1.添加缓存配置  -配置文件   -配置config结构体
-2.删除旧的model层 -删除shorturlmodel文件
-3. 重新生成model层代码 goctl model mysql datasource -url="root:jinyubo@tcp(127.0.0.1:3306)/test" -table="short_url_map" -dir="./model" -c
+## Features
+
+- Base62 short code generation
+- duplicate long URL detection by MD5
+- blacklist protection for reserved short paths
+- Redis Bloom filter to reduce invalid short-link lookups
+- 302 redirect for short-link access
+
+## Project Structure
+
+```text
+.
+|-- etc/                  # example configuration
+|-- image/                # project diagrams
+|-- internal/
+|   |-- config/           # config schema
+|   |-- handler/          # HTTP handlers and routes
+|   |-- logic/            # business logic
+|   |-- svc/              # service context
+|   `-- types/            # request / response types
+|-- model/                # go-zero generated models
+|-- pkg/                  # utility packages
+|-- sequence/             # sequence generator abstraction
+|-- sequence.sql          # sequence table schema
+|-- short_url_map.sql     # short URL mapping table schema
+`-- main.go               # application entrypoint
+```
+
+## API
+
+### Create short URL
+
+`POST /convert`
+
+Request:
+
+```json
+{
+  "longUrl": "https://example.com/article/123"
+}
+```
+
+Response:
+
+```json
+{
+  "shortUrl": "http://localhost:8888/abc123"
+}
+```
+
+### Redirect by short URL
+
+`GET /:shortUrl`
+
+Example:
+
+```text
+GET /abc123
+```
+
+The service responds with `302 Found` and redirects to the original long URL.
+
+## Quick Start
+
+### 1. Prepare dependencies
+
+- MySQL
+- Redis
+
+### 2. Create tables
+
+Run the SQL scripts:
+
+- `sequence.sql`
+- `short_url_map.sql`
+
+### 3. Update configuration
+
+Edit the example config if needed:
+
+- `etc/shortener-api.example.yaml`
+
+You can keep using this file directly, or copy it to your own local config file and pass it with `-f`.
+
+### 4. Run the service
+
+```bash
+go run .
+```
+
+Or specify a custom config file:
+
+```bash
+go run . -f etc/shortener-api.example.yaml
+```
+
+## Notes
+
+- the current sequence generator uses MySQL auto-increment semantics
+- short URL validation accepts reachable links and allows redirecting targets
+- the repository intentionally excludes private local config files
+- the framework diagram used in this README lives at `image/framework.png`
+
+## Future Improvements
+
+- add unit tests for handler / logic layers
+- support custom short-code aliases
+- add metrics and observability
+- improve API error model

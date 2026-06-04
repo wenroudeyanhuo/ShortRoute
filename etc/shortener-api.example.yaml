@@ -1,4 +1,4 @@
-Name: Shortener-api
+Name: ShortRoute
 Host: 0.0.0.0
 Port: 8888
 
@@ -12,7 +12,7 @@ BaseString: "pqrKLMNOP4stu012abchCDEijkl389mnovwxyzABFGdefgHIJ567QRSTUVWXYZ"
 
 ShortUrlBlackList: ["version","fuxk","stupid","convert","health","api","js","css"]
 
-ShortDomain: "q1mi.cn"
+ShortDomain: "http://localhost:8888"
 
 CacheRedis:
   - Host: 127.0.0.1:6379

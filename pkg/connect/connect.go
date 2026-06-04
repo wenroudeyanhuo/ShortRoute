@@ -31,6 +31,6 @@ func Get(url string) bool {
 	resp.Body.Close()
 	//并不会清除数据，只是将数据从缓冲区中读取到程序中
 	//别人发一个跳转链接也不会给过
-	return resp.StatusCode == http.StatusOK
+	return resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusBadRequest
 
 }

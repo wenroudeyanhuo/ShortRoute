@@ -7,6 +7,7 @@
 package urltool
 
 import (
+	"errors"
 	"net/url"
 	"path"
 )
@@ -17,6 +18,9 @@ func GetBasePath(Url string) (string, error) {
 	myUrl, err := url.Parse(Url)
 	if err != nil {
 		return "", err
+	}
+	if myUrl.Scheme == "" || myUrl.Host == "" {
+		return "", errors.New("invalid url")
 	}
 	basePath := path.Base(myUrl.Path)
 	return basePath, nil

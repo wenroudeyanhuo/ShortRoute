@@ -1,0 +1,21 @@
+Name: Shortener-api
+Host: 0.0.0.0
+Port: 8888
+
+ShortUrlDB:
+  DSN: "root:root@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai"
+
+SequenceDB:
+  DSN: "root:root@tcp(127.0.0.1:3306)/test?charset=utf8mb4&parseTime=True&loc=Asia%2FShanghai"
+
+BaseString: "pqrKLMNOP4stu012abchCDEijkl389mnovwxyzABFGdefgHIJ567QRSTUVWXYZ"
+
+ShortUrlBlackList: ["version","fuxk","stupid","convert","health","api","js","css"]
+
+ShortDomain: "q1mi.cn"
+
+CacheRedis:
+  - Host: 127.0.0.1:6379
+BloomRedis:
+  Host: 127.0.0.1:6379
+  Type: node

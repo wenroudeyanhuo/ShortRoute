@@ -1,0 +1,38 @@
+syntax = "v1"
+
+info (
+	title:   "type title here"
+	desc:    "type desc here"
+	author:  "type author here"
+	email:   "type email here"
+	version: "type version here"
+)
+
+/* 短链接项目
+author :conola
+*/
+type ConvertRequest {
+	LongURL string `json:"longUrl"  validate:"required"`
+}
+
+type ConvertResponse {
+	ShortURL string `json:"shortUrl"`
+}
+
+type ShowRequest {
+	ShortURL string `path:"shortUrl" validate:"required"`
+}
+
+type ShowResponse {
+	LongURL string `json:"longUrl"`
+}
+
+//长链接 转 短链接  ；  短链接 转 长链接
+service Shortener-api {
+	@handler ConvertHandler
+	post /convert (ConvertRequest) returns (ConvertResponse)
+
+	@handler ShowHandler
+	post /:shortUrl (ShowRequest) returns (ShowResponse)
+}
+
